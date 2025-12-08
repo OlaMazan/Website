@@ -12,15 +12,11 @@
     <p>Press any key to start</p>
     <div class="playground"></div>
 
-
-       
-    </div>
-</body>
-</html>
-
     <script>
-        // Zmienna określająca ilość komórek
-        const numberOfCells = 1200; // Zmień tę wartość na dowolną liczbę
+        // Zmienna określająca wymiary siatki tetrisa
+        const COLUMNS = 10;  // Szerokość siatki
+        const ROWS = 20;      // Wysokość siatki
+        const numberOfCells = COLUMNS * ROWS; // 200 komórek
 
         // Funkcja, która generuje divów z klasą "cell"
         function generateCells(count) {
@@ -42,3 +38,5 @@
             generateCells(numberOfCells);
         });
     </script>
+</body>
+</html>
