@@ -26,6 +26,58 @@ p{
     box-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
 }
 
+/* Layout: playground + sidebar */
+.game-area {
+    display: flex;
+    gap: 1.5rem;
+    align-items: flex-start;
+}
+
+.sidebar {
+    width: 12rem;
+    color: #fff;
+}
+
+.score-panel {
+    background: linear-gradient(180deg,#111 0%, #222 100%);
+    border: 1px solid rgba(255,255,255,0.06);
+    padding: 1rem;
+    border-radius: 6px;
+    box-shadow: 0 4px 18px rgba(0,0,0,0.6);
+}
+
+.score-panel h2, .score-panel h3 {
+    margin: 0.25rem 0;
+    font-weight: 600;
+}
+
+.score-value {
+    font-size: 1.5rem;
+    margin-bottom: 0.5rem;
+}
+
+#restart {
+    display: block;
+    width: 100%;
+    padding: 0.5rem;
+    margin-top: 0.75rem;
+    background: #333;
+    border: 1px solid rgba(255,255,255,0.06);
+    color: #fff;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.game-over {
+    margin-top: 0.5rem;
+    padding: 0.5rem;
+    background: rgba(255,0,0,0.12);
+    color: #ffdddd;
+    text-align: center;
+    border-radius: 4px;
+    font-weight: 700;
+}
+
 .cell {
     background-color: rgba(255, 255, 255, 0.05);
     border: 1px solid rgba(255, 255, 255, 0.08);

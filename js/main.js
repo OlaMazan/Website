@@ -5,6 +5,9 @@ const numberOfCells = COLUMNS * ROWS; // 200 komórek
 let cells = []; // referencje do wszystkich komórek DOM
 let board = new Array(COLUMNS * ROWS).fill(null); // null lub nazwa klasy koloru
 let gameOver = false;
+let score = 0;
+let clearedLines = 0;
+let level = 1;
 
 function generateCells(count) {
     const playground = document.querySelector('.playground');
@@ -160,6 +163,75 @@ function lockCurrent() {
     }
     current = null;
     renderBoard();
+    // Po zablokowaniu sprawdź pełne linie
+    const lines = clearFullLines();
+    if (lines > 0) {
+        // scoring: standard Tetris scoring for 1-4 lines
+        const points = [0, 100, 300, 500, 800];
+        score += (points[lines] || 0);
+        clearedLines += lines;
+        // zwiększ poziom co 10 linii
+        level = 1 + Math.floor(clearedLines / 10);
+        updateScoreboard();
+    }
+}
+
+function clearFullLines() {
+    let removed = 0;
+    // sprawdź od dołu
+    for (let r = ROWS - 1; r >= 0; r--) {
+        let full = true;
+        for (let c = 0; c < COLUMNS; c++) {
+            if (!board[indexFromRC(r, c)]) { full = false; break; }
+        }
+        if (full) {
+            // usuń wiersz r, przesuwając wszystko powyżej w dół
+            for (let rr = r; rr > 0; rr--) {
+                for (let c = 0; c < COLUMNS; c++) {
+                    board[indexFromRC(rr, c)] = board[indexFromRC(rr-1, c)];
+                }
+            }
+            // wyczyść najwyższy wiersz
+            for (let c = 0; c < COLUMNS; c++) {
+                board[indexFromRC(0, c)] = null;
+            }
+            removed++;
+            // po usunięciu wiersza sprawdź ten sam indeks ponownie (bo wszystko się przesunęło)
+            r++;
+        }
+    }
+    if (removed > 0) renderBoard();
+    return removed;
+}
+
+function updateScoreboard() {
+    const s = document.getElementById('score');
+    const l = document.getElementById('lines');
+    const lv = document.getElementById('level');
+    const go = document.getElementById('game-over');
+    if (s) s.innerText = score;
+    if (l) l.innerText = clearedLines;
+    if (lv) lv.innerText = level;
+    if (go) go.hidden = !gameOver;
+}
+
+function endGame() {
+    gameOver = true;
+    if (dropInterval) clearInterval(dropInterval);
+    updateScoreboard();
+}
+
+function restartGame() {
+    board = new Array(COLUMNS * ROWS).fill(null);
+    gameOver = false;
+    score = 0;
+    clearedLines = 0;
+    level = 1;
+    current = null;
+    if (dropInterval) clearInterval(dropInterval);
+    generateCells(numberOfCells);
+    updateScoreboard();
+    startDemo();
 }
 
 function rotateCurrent() {
@@ -181,7 +253,7 @@ function startDemo() {
     dropInterval = setInterval(() => {
         if (gameOver) {
             clearInterval(dropInterval);
-            alert('Game Over');
+            endGame();
             return;
         }
         const moved = moveCurrent(1, 0);
@@ -190,7 +262,7 @@ function startDemo() {
             lockCurrent();
             if (gameOver) {
                 clearInterval(dropInterval);
-                alert('Game Over');
+                endGame();
                 return;
             }
             spawnPiece(randomPieceName());
@@ -213,4 +285,7 @@ document.addEventListener('keydown', (e) => {
 
 document.addEventListener('DOMContentLoaded', () => {
     startDemo();
+    updateScoreboard();
+    const restartBtn = document.getElementById('restart');
+    if (restartBtn) restartBtn.addEventListener('click', restartGame);
 });

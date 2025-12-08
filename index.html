@@ -10,8 +10,26 @@
 <body>
     <h1>Tetris</h1>
     <p>Press any key to start</p>
-    <div class="playground"></div>
 
+    <div class="game-area">
+        <div class="playground" aria-label="Tetris playground"></div>
+        <aside class="sidebar">
+            <div class="score-panel">
+                <h2>Score</h2>
+                <div id="score" class="score-value">0</div>
+
+                <h3>Lines</h3>
+                <div id="lines" class="score-value">0</div>
+
+                <h3>Level</h3>
+                <div id="level" class="score-value">1</div>
+
+                <div id="game-over" class="game-over" hidden>Game Over</div>
+
+                <button id="restart">Restart</button>
+            </div>
+        </aside>
+    </div>
 
     <script src="js/main.js"></script>
 </body>
