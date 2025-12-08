@@ -26,14 +26,27 @@ p{
     box-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
 }
 
-.playground > div {
-    background-color: rgba(255, 255, 255, 0.1);
-    border: 1px solid rgba(255, 255, 255, 0.2);
+.cell {
+    background-color: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.08);
     width: 2rem;
     height: 2rem;
     box-sizing: border-box;
 }
 
-.playground > div:hover {
-    background-color: rgba(255, 255, 255, 0.2);
+.cell:hover {
+    background-color: rgba(255, 255, 255, 0.12);
 }
+
+.cell.active {
+    border-color: rgba(0,0,0,0.2);
+}
+
+/* Kolory klocków (używane przez JS poprzez style inline lub klasę) */
+.cell.color-I { background-color: #00f0f0; }
+.cell.color-O { background-color: #f0f000; }
+.cell.color-T { background-color: #a000f0; }
+.cell.color-S { background-color: #00f000; }
+.cell.color-Z { background-color: #f00000; }
+.cell.color-J { background-color: #0000f0; }
+.cell.color-L { background-color: #f0a000; }

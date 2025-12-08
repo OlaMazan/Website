@@ -12,31 +12,7 @@
     <p>Press any key to start</p>
     <div class="playground"></div>
 
-    <script>
-        // Zmienna określająca wymiary siatki tetrisa
-        const COLUMNS = 10;  // Szerokość siatki
-        const ROWS = 20;      // Wysokość siatki
-        const numberOfCells = COLUMNS * ROWS; // 200 komórek
 
-        // Funkcja, która generuje divów z klasą "cell"
-        function generateCells(count) {
-            const playground = document.querySelector('.playground');
-            
-            // Czyszczenie playground
-            playground.innerHTML = '';
-            
-            // Pętla generująca divów
-            for (let i = 0; i < count; i++) {
-                const cell = document.createElement('div');
-                cell.className = 'cell';
-                playground.appendChild(cell);
-            }
-        }
-
-        // Uruchomienie funkcji gdy strona się załaduje
-        document.addEventListener('DOMContentLoaded', function() {
-            generateCells(numberOfCells);
-        });
-    </script>
+    <script src="js/main.js"></script>
 </body>
 </html>
