@@ -246,28 +246,43 @@ function rotateCurrent() {
 // Basic game loop to test pieces: spawn random and drop
 let dropInterval = null;
 
-function startDemo() {
-    generateCells(numberOfCells);
-    spawnPiece(randomPieceName());
-    if (dropInterval) clearInterval(dropInterval);
-    dropInterval = setInterval(() => {
+// Drop speed control (ms). Decreases as level increases.
+function getDropSpeed(level) {
+    // base speed (ms) for level 1
+    const base = 700;
+    // decrease per level (ms)
+    const perLevel = 60;
+    const min = 80; // minimal interval
+    return Math.max(min, base - (level - 1) * perLevel);
+}
+
+function tickDrop() {
+    if (gameOver) return;
+    const moved = moveCurrent(1, 0);
+    if (!moved) {
+        // zablokuj bieżący klocek i spawń nowy
+        lockCurrent();
         if (gameOver) {
-            clearInterval(dropInterval);
             endGame();
             return;
         }
-        const moved = moveCurrent(1, 0);
-        if (!moved) {
-            // zablokuj bieżący klocek i spawń nowy
-            lockCurrent();
-            if (gameOver) {
-                clearInterval(dropInterval);
-                endGame();
-                return;
-            }
-            spawnPiece(randomPieceName());
-        }
-    }, 500);
+        spawnPiece(randomPieceName());
+    }
+}
+
+function setDropInterval() {
+    // clear existing
+    if (dropInterval) clearInterval(dropInterval);
+    if (gameOver) return;
+    const ms = getDropSpeed(level);
+    dropInterval = setInterval(tickDrop, ms);
+}
+
+function startDemo() {
+    generateCells(numberOfCells);
+    spawnPiece(randomPieceName());
+    // ustaw interval zgodny z aktualnym poziomem
+    setDropInterval();
 }
 
 function randomPieceName() {
