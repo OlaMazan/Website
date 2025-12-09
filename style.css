@@ -10,6 +10,8 @@ body{
     padding: 0;
     overflow: hidden;
     position: relative;
+    height: 100vh;
+    width: 100%;
 }
 
 #starfield {
@@ -34,11 +36,42 @@ p{
     z-index: 1;
 }
 
+.title{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+
+}
+
 /* Menu główne */
-.menu-container {
-    position: relative;
+
+/* Generic page container for individual game pages */
+.page-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    min-height: 70vh;
+    padding: 2rem;
+    box-sizing: border-box;
     z-index: 1;
+}
+
+.page-content {
+    background: linear-gradient(180deg, rgba(10,10,10,0.9), rgba(20,20,20,0.85));
+    padding: 2.25rem;
+    border-radius: 14px;
+    border: 1px solid rgba(255,255,255,0.04);
+    min-width: 30vw;
+    max-width: 60vw;
+    min-height: 40vh;
     text-align: center;
+}
+
+.muted {
+    color: #cfcfcf;
+    margin-bottom: 1rem;
 }
 
 .menu-container h1 {
@@ -46,10 +79,13 @@ p{
 }
 
 .menu-buttons {
-    display: flex;
-    gap: 2rem;
+    display: grid;
+    grid-template-columns: repeat(3, 220px);
+    grid-template-rows: repeat(2, 220px);
+    gap: 1rem;
     justify-content: center;
-    flex-wrap: wrap;
+    align-items: center;
+    padding: 1rem 0;
 }
 
 .menu-btn {
@@ -59,8 +95,6 @@ p{
     justify-content: center;
     gap: 1rem;
     padding: 2rem;
-    width: 180px;
-    height: 180px;
     background: linear-gradient(135deg, rgba(102, 126, 234, 0.3) 0%, rgba(118, 75, 162, 0.3) 100%);
     border: 2px solid rgba(102, 126, 234, 0.5);
     border-radius: 12px;
@@ -70,6 +104,25 @@ p{
     font-weight: 600;
     transition: all 0.3s ease;
     cursor: pointer;
+}
+
+/* Simple examples under the menu */
+.simple-examples {
+    margin-top: 1rem;
+    color: #ddd;
+    max-width: 860px;
+    text-align: left;
+}
+.simple-examples h2 {
+    margin: 0.5rem 0;
+}
+.simple-examples ul {
+    margin: 0.5rem 0 1rem 1.2rem;
+    color: #cfe7ff;
+}
+.simple-examples p {
+    font-size: 0.95rem;
+    color: #bfcfe0;
 }
 
 .menu-btn:hover {
@@ -280,12 +333,6 @@ p{
 .cell.color-L { background-color: #f0a000; }
 
 /* Space Invaders Styles */
-.space-invaders-container {
-    position: relative;
-    z-index: 1;
-    text-align: center;
-    margin-top: 2rem;
-}
 
 .space-invaders-container h1 {
     margin-bottom: 1rem;
