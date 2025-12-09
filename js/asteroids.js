@@ -87,11 +87,19 @@ class Bullet {
     this.life=1.0; this.radius=2;
   }
   update(dt){ this.pos.x+=this.vel.x*dt; this.pos.y+=this.vel.y*dt; wrapPos(this.pos); this.life-=dt; }
-  draw(){
-    ctx.fillStyle='white';
-    for(const o of WRAP_OFFSETS){
-      ctx.beginPath(); ctx.arc(this.pos.x + o[0], this.pos.y + o[1], this.radius,0,Math.PI*2); ctx.fill();
+  update(dt){
+    this.pos.x += this.vel.x * dt;
+    this.pos.y += this.vel.y * dt;
+    // Bullets do NOT wrap — if they leave the canvas, they expire
+    if(this.pos.x < 0 || this.pos.x > W || this.pos.y < 0 || this.pos.y > H){
+      this.life = 0;
+      return;
     }
+    this.life -= dt;
+  }
+  draw(){
+    ctx.fillStyle = 'white';
+    ctx.beginPath(); ctx.arc(this.pos.x, this.pos.y, this.radius, 0, Math.PI*2); ctx.fill();
   }
 }
 
