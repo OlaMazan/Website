@@ -8,6 +8,7 @@ let gameOver = false;
 let score = 0;
 let clearedLines = 0;
 let level = 1;
+let gameStarted = false;
 
 // Starfield animation
 function initStarfield() {
@@ -397,10 +398,30 @@ document.addEventListener('keydown', (e) => {
     else if (e.key === 'ArrowUp' || e.key === ' ') rotateCurrent();
 });
 
+function hideStartOverlay() {
+    const overlay = document.getElementById('start-overlay');
+    if (overlay) {
+        overlay.classList.add('hidden');
+    }
+    gameStarted = true;
+}
+
 document.addEventListener('DOMContentLoaded', () => {
     initStarfield();
-    startDemo();
     updateScoreboard();
+    
+    // Nasłuchuj dowolnego klawisza aby ukryć overlay i startować grę
+    const handleKeyPress = (e) => {
+        if (!gameStarted) {
+            hideStartOverlay();
+            startDemo();
+            // Usuń listener po uruchomieniu gry
+            document.removeEventListener('keydown', handleKeyPress);
+        }
+    };
+    
+    document.addEventListener('keydown', handleKeyPress);
+    
     const restartBtn = document.getElementById('restart');
     if (restartBtn) restartBtn.addEventListener('click', restartGame);
 });

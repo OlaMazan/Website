@@ -53,6 +53,42 @@ p{
     z-index: 1;
 }
 
+/* Start overlay */
+.start-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.85);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 100;
+    border-radius: 8px;
+}
+
+.start-overlay.hidden {
+    display: none;
+}
+
+.overlay-content {
+    text-align: center;
+    color: #fff;
+}
+
+.overlay-content h2 {
+    font-size: 3rem;
+    margin-bottom: 2rem;
+    font-weight: 700;
+}
+
+.overlay-content p {
+    font-size: 1.2rem;
+    margin: 0;
+    opacity: 0.8;
+}
+
 .sidebar {
     width: 12rem;
     color: #fff;
