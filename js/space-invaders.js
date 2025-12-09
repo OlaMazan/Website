@@ -38,8 +38,9 @@ let playerX = GAME_WIDTH / 2 - PLAYER_SIZE / 2;
 let playerY = GAME_HEIGHT - 60;
 let bullets = [];
 let enemies = [];
-let gameRunning = true;
+let gameRunning = false;
 let gamePaused = false;
+let gameStarted = false;
 let score = 0;
 let lives = 3;
 let level = 1;
@@ -60,6 +61,7 @@ let scoreDisplay;
 let livesDisplay;
 let levelDisplay;
 let gameOverDisplay;
+let overlayElement;
 let restartButton;
 
 // Initialize game
@@ -72,10 +74,10 @@ document.addEventListener('DOMContentLoaded', () => {
     livesDisplay = document.getElementById('lives');
     levelDisplay = document.getElementById('level');
     gameOverDisplay = document.getElementById('game-over-si');
+    overlayElement = document.getElementById('start-overlay-si');
     restartButton = document.getElementById('restart-si');
     
     resetGame();
-    startGame();
     
     // Setup restart button
     if (restartButton) {
@@ -87,9 +89,16 @@ document.addEventListener('DOMContentLoaded', () => {
 document.addEventListener('keydown', (e) => {
     keys[e.key] = true;
     
+    if (!gameStarted) {
+        // First keypress - start the game
+        hideStartOverlay();
+        startGame();
+        return;
+    }
+    
+    // Game running - handle shooting and movement
     if (e.key === ' ' || e.key === 'ArrowUp') {
         e.preventDefault();
-        console.log('Key pressed:', e.key, 'gameRunning:', gameRunning);
         shoot();
     }
 });
@@ -103,8 +112,9 @@ function resetGame() {
     playerY = GAME_HEIGHT - 60;
     bullets = [];
     enemies = [];
-    gameRunning = true;
+    gameRunning = false;
     gamePaused = false;
+    gameStarted = false;
     score = 0;
     lives = 3;
     level = 1;
@@ -130,7 +140,15 @@ function resetGame() {
     render();
 }
 
+function hideStartOverlay() {
+    if (overlayElement) {
+        overlayElement.classList.add('hidden');
+    }
+    gameStarted = true;
+}
+
 function startGame() {
+    gameRunning = true;
     // Main game loop
     gameLoopInterval = setInterval(() => {
         if (!gameRunning) return;
