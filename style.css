@@ -1,19 +1,37 @@
 body{
-    background-color: #212121;
+    background-color: #0a0a0a;
     color: #fff;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    position: relative;
+}
+
+#starfield {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+    background-color: #0a0a0a;
 }
 
 h1{
     font-size: 4rem;
+    position: relative;
+    z-index: 1;
 }
 
 p{
     font-size: 1,2rem;
+    position: relative;
+    z-index: 1;
 }
 
 .playground{
@@ -31,6 +49,8 @@ p{
     display: flex;
     gap: 1.5rem;
     align-items: flex-start;
+    position: relative;
+    z-index: 1;
 }
 
 .sidebar {
