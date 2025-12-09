@@ -300,11 +300,11 @@ p{
 
 .space-invaders-game {
     position: relative;
-    width: 600px;
-    height: 500px;
+    width: 800px;
+    height: 600px;
     background: linear-gradient(180deg, #000033 0%, #001a1a 100%);
-    border: 3px solid #00ff00;
-    box-shadow: 0 0 20px rgba(0, 255, 0, 0.3);
+    border: 3px solid #001a66;
+    box-shadow: 0 0 20px rgba(0, 26, 102, 0.3);
     overflow: hidden;
 }
 
@@ -330,9 +330,13 @@ p{
 
 .enemy {
     position: absolute;
-    font-size: 1.5rem;
-    color: #ff00ff;
+    font-size: 10px;
+    color: #ffffff;
     user-select: none;
+    white-space: pre;
+    font-family: monospace;
+    font-weight: bold;
+    line-height: 1;
 }
 
 .bullets-container {

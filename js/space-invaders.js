@@ -1,15 +1,37 @@
 // Space Invaders Game
 
 // Game constants
-const GAME_WIDTH = 600;
-const GAME_HEIGHT = 500;
+const GAME_WIDTH = 800;
+const GAME_HEIGHT = 600;
 const PLAYER_SIZE = 30;
 const ENEMY_SIZE = 30;
 const BULLET_SIZE = 12;
 const PLAYER_SPEED = 8;
-const ENEMY_SPEED = 2;
+const ENEMY_SPEED = 0.5;
 const BULLET_SPEED = 7;
 const SPAWN_RATE = 1500; // milliseconds
+const ENEMY_ROWS = 3;
+const ENEMY_COLS = 8;
+const ENEMY_SPAWN_X = 50;
+const ENEMY_SPAWN_Y = 30;
+const ENEMY_SPACING_X = 60;
+const ENEMY_SPACING_Y = 60;
+
+// Enemy sprite - ASCII art representation
+const ENEMY_SPRITE = [
+    "  ███  ",
+    " █████ ",
+    "███████",
+    "█ ███ █"
+];
+
+// Enemy sprite grid (each # represents a pixel that needs to be destroyed)
+const ENEMY_SPRITE_GRID = [
+    [0, 0, 1, 1, 1, 0, 0],
+    [0, 1, 1, 1, 1, 1, 0],
+    [1, 1, 1, 1, 1, 1, 1],
+    [1, 0, 1, 1, 1, 0, 1]
+];
 
 // Game state
 let playerX = GAME_WIDTH / 2 - PLAYER_SIZE / 2;
@@ -24,6 +46,7 @@ let level = 1;
 let enemySpawnInterval = null;
 let gameLoopInterval = null;
 let enemyCount = 0;
+let enemyDirection = 1; // 1 for right, -1 for left
 
 // Input tracking
 const keys = {};
@@ -86,15 +109,28 @@ function resetGame() {
     lives = 3;
     level = 1;
     enemyCount = 0;
+    enemyDirection = 1;
+    
+    // Create initial enemy grid
+    for (let row = 0; row < ENEMY_ROWS; row++) {
+        for (let col = 0; col < ENEMY_COLS; col++) {
+            enemies.push({
+                x: ENEMY_SPAWN_X + col * ENEMY_SPACING_X,
+                y: ENEMY_SPAWN_Y + row * ENEMY_SPACING_Y,
+                width: 35,
+                height: 20,
+                health: 19, // 19 pixels to destroy (count of 1s in grid)
+                damage: JSON.parse(JSON.stringify(ENEMY_SPRITE_GRID)) // Deep copy of sprite grid
+            });
+        }
+    }
+    enemyCount = enemies.length;
     
     updateDisplay();
     render();
 }
 
 function startGame() {
-    // Spawn enemies periodically
-    enemySpawnInterval = setInterval(spawnEnemy, SPAWN_RATE - level * 100);
-    
     // Main game loop
     gameLoopInterval = setInterval(() => {
         if (!gameRunning) return;
@@ -106,21 +142,27 @@ function startGame() {
     }, 30);
 }
 
-function spawnEnemy() {
-    if (!gameRunning) return;
+function moveEnemies() {
+    // Move all enemies left or right
+    let shouldChangeDirection = false;
     
-    const x = Math.random() * (GAME_WIDTH - ENEMY_SIZE);
-    const y = -ENEMY_SIZE;
+    for (let i = 0; i < enemies.length; i++) {
+        enemies[i].x += ENEMY_SPEED * enemyDirection;
+        
+        // Check if any enemy hit the edge
+        if ((enemyDirection === 1 && enemies[i].x + 40 >= GAME_WIDTH) ||
+            (enemyDirection === -1 && enemies[i].x <= 0)) {
+            shouldChangeDirection = true;
+        }
+    }
     
-    enemies.push({
-        x: x,
-        y: y,
-        width: ENEMY_SIZE,
-        height: ENEMY_SIZE,
-        health: 1
-    });
-    
-    enemyCount++;
+    // Change direction and move down if edge reached
+    if (shouldChangeDirection) {
+        enemyDirection *= -1;
+        for (let i = 0; i < enemies.length; i++) {
+            enemies[i].y += 30;
+        }
+    }
 }
 
 function shoot() {
@@ -156,14 +198,13 @@ function update() {
         }
     }
     
-    // Update enemies
-    for (let i = enemies.length - 1; i >= 0; i--) {
-        enemies[i].y += ENEMY_SPEED;
-        
-        // Remove enemies that go off screen (player loses life)
-        if (enemies[i].y > GAME_HEIGHT) {
-            enemies.splice(i, 1);
-            lives--;
+    // Move enemies in formation
+    moveEnemies();
+    
+    // Check if enemies reached the bottom
+    for (let i = 0; i < enemies.length; i++) {
+        if (enemies[i].y + 30 > GAME_HEIGHT) {
+            gameRunning = false;
         }
     }
 }
@@ -171,14 +212,23 @@ function update() {
 function checkCollisions() {
     // Check bullet-enemy collisions
     for (let i = bullets.length - 1; i >= 0; i--) {
+        let bulletHit = false;
         for (let j = enemies.length - 1; j >= 0; j--) {
             if (isColliding(bullets[i], enemies[j])) {
+                // Pixel-based damage
+                damageEnemy(enemies[j], bullets[i]);
                 bullets.splice(i, 1);
-                enemies.splice(j, 1);
-                score += 10 * level;
+                bulletHit = true;
+                
+                // Check if enemy is destroyed
+                if (enemies[j].health <= 0) {
+                    enemies.splice(j, 1);
+                    score += 10 * level;
+                }
                 break;
             }
         }
+        if (bulletHit) break;
     }
     
     // Check player-enemy collisions
@@ -193,6 +243,28 @@ function checkCollisions() {
     }
 }
 
+function damageEnemy(enemy, bullet) {
+    // Bullet is 4px wide, enemy sprite is 7 characters wide (35px total)
+    // Each character in sprite = 5px in display (35px / 7 chars)
+    const pixelsPerChar = 5;
+    
+    // Calculate which sprite column the bullet is hitting
+    const bulletLocalX = Math.floor((bullet.x - enemy.x) / pixelsPerChar);
+    const bulletLocalY = Math.floor((bullet.y - enemy.y) / pixelsPerChar);
+    
+    // Check if bullet coordinates are within sprite bounds
+    if (bulletLocalY >= 0 && bulletLocalY < enemy.damage.length &&
+        bulletLocalX >= 0 && bulletLocalX < enemy.damage[0].length) {
+        // Only destroy if there's a pixel at this position
+        if (enemy.damage[bulletLocalY][bulletLocalX] === 1) {
+            enemy.damage[bulletLocalY][bulletLocalX] = 0; // Destroy this pixel
+            enemy.health--;
+            return true;
+        }
+    }
+    return false;
+}
+
 function isColliding(rect1, rect2) {
     return rect1.x < rect2.x + rect2.width &&
            rect1.x + rect1.width > rect2.x &&
@@ -203,12 +275,12 @@ function isColliding(rect1, rect2) {
 function checkGameState() {
     updateDisplay();
     
-    // Level up every 50 enemies defeated
-    if (enemyCount > 0 && enemyCount % 50 === 0 && level < 5) {
+    // Level up when all enemies are defeated
+    if (enemies.length === 0 && enemyCount > 0) {
         level++;
-        // Increase difficulty
-        clearInterval(enemySpawnInterval);
-        enemySpawnInterval = setInterval(spawnEnemy, Math.max(500, SPAWN_RATE - level * 100));
+        ENEMY_SPEED = ENEMY_SPEED + 0.5; // Increase difficulty
+        resetGame();
+        return;
     }
     
     if (lives <= 0) {
@@ -228,12 +300,10 @@ function endGame() {
     if (gameOverDisplay) {
         gameOverDisplay.hidden = false;
     }
-    clearInterval(enemySpawnInterval);
     clearInterval(gameLoopInterval);
 }
 
 function restartGame() {
-    clearInterval(enemySpawnInterval);
     clearInterval(gameLoopInterval);
     
     // Clear display
@@ -272,9 +342,26 @@ function render() {
     enemies.forEach(enemy => {
         const div = document.createElement('div');
         div.className = 'enemy';
-        div.textContent = '▼';
         div.style.left = enemy.x + 'px';
         div.style.top = enemy.y + 'px';
+        div.style.fontSize = '12px';
+        div.style.lineHeight = '1';
+        div.style.whiteSpace = 'pre';
+        div.style.color = '#ffffff';
+        div.style.fontWeight = 'bold';
+        div.style.fontFamily = 'monospace';
+        
+        // Build sprite with damage
+        let sprite = [];
+        for (let row = 0; row < enemy.damage.length; row++) {
+            let line = '';
+            for (let col = 0; col < enemy.damage[row].length; col++) {
+                line += enemy.damage[row][col] === 1 ? '█' : ' ';
+            }
+            sprite.push(line);
+        }
+        
+        div.textContent = sprite.join('\n');
         enemiesContainer.appendChild(div);
     });
 }
