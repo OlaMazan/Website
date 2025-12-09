@@ -22,6 +22,10 @@ function wrapPos(p){
   if(p.y<0) p.y+=H; if(p.y>H) p.y-=H;
 }
 
+const WRAP_OFFSETS = [
+  [0,0], [-W,0], [W,0], [0,-H], [0,H],
+  [-W,-H], [W,-H], [-W,H], [W,H]
+];
 /* ---------- Game classes (Ship, Bullet, Asteroid) ---------- */
 
 class Ship {
@@ -51,23 +55,25 @@ class Ship {
     if(this.respawnInvul>0) this.respawnInvul -= dt;
   }
   draw(){
-    ctx.save();
-    ctx.translate(this.pos.x,this.pos.y);
-    ctx.rotate(this.angle);
-    ctx.beginPath();
-    ctx.moveTo(15,0); ctx.lineTo(-10,8); ctx.lineTo(-6,0); ctx.lineTo(-10,-8); ctx.closePath();
-    ctx.strokeStyle = 'white'; ctx.stroke();
-    // draw thrust flame if thrusting
-    if(keys['ArrowUp']){
+    for(const o of WRAP_OFFSETS){
+      ctx.save();
+      ctx.translate(this.pos.x + o[0], this.pos.y + o[1]);
+      ctx.rotate(this.angle);
       ctx.beginPath();
-      ctx.moveTo(-6,0);
-      ctx.lineTo(-14,5);
-      ctx.lineTo(-14,-5);
-      ctx.closePath();
-      ctx.strokeStyle = 'orange';
-      ctx.stroke();
+      ctx.moveTo(15,0); ctx.lineTo(-10,8); ctx.lineTo(-6,0); ctx.lineTo(-10,-8); ctx.closePath();
+      ctx.strokeStyle = 'white'; ctx.stroke();
+      // draw thrust flame if thrusting
+      if(keys['ArrowUp']){
+        ctx.beginPath();
+        ctx.moveTo(-6,0);
+        ctx.lineTo(-14,5);
+        ctx.lineTo(-14,-5);
+        ctx.closePath();
+        ctx.strokeStyle = 'orange';
+        ctx.stroke();
+      }
+      ctx.restore();
     }
-    ctx.restore();
   }
 }
 
@@ -77,26 +83,36 @@ class Bullet {
     this.life=1.0; this.radius=2;
   }
   update(dt){ this.pos.x+=this.vel.x*dt; this.pos.y+=this.vel.y*dt; wrapPos(this.pos); this.life-=dt; }
-  draw(){ ctx.fillStyle='white'; ctx.beginPath(); ctx.arc(this.pos.x,this.pos.y, this.radius,0,Math.PI*2); ctx.fill(); }
+  draw(){
+    ctx.fillStyle='white';
+    for(const o of WRAP_OFFSETS){
+      ctx.beginPath(); ctx.arc(this.pos.x + o[0], this.pos.y + o[1], this.radius,0,Math.PI*2); ctx.fill();
+    }
+  }
 }
 
 class Asteroid {
   constructor(x,y,size){
     this.pos={x,y}; this.size=size;
-    const speed = 30 + (4-size)*40 + rand(-10,10);
+    const speed = 20 + (4-size)*15 + rand(-5,5);
     const ang = rand(0,Math.PI*2);
     this.vel={x:Math.cos(ang)*speed, y:Math.sin(ang)*speed};
     this.radius = [0,15,30,50][size];
-    this.rotation = rand(-1,1);
+    this.rotation = rand(-0.12,0.12);
     this.angle = rand(0,Math.PI*2);
+    this.verts = [];
+    for(let i=0;i<8;i++) this.verts.push(0.8 + rand(0,0.4));
   }
   update(dt){ this.pos.x+=this.vel.x*dt; this.pos.y+=this.vel.y*dt; this.angle+=this.rotation*dt; wrapPos(this.pos); }
   draw(){
-    ctx.save(); ctx.translate(this.pos.x,this.pos.y); ctx.rotate(this.angle);
-    ctx.strokeStyle='white'; ctx.beginPath();
-    const r = this.radius; ctx.moveTo(r,0);
-    for(let i=1;i<8;i++){ const a = i/8*Math.PI*2; ctx.lineTo(Math.cos(a)*r*(0.8+0.4*Math.random()), Math.sin(a)*r*(0.8+0.4*Math.random())); }
-    ctx.closePath(); ctx.stroke(); ctx.restore();
+    const r = this.radius;
+    for(const o of WRAP_OFFSETS){
+      ctx.save(); ctx.translate(this.pos.x + o[0], this.pos.y + o[1]); ctx.rotate(this.angle);
+      ctx.strokeStyle='white'; ctx.lineWidth=1.2; ctx.lineJoin='round'; ctx.beginPath();
+      ctx.moveTo(r*this.verts[0],0);
+      for(let i=1;i<8;i++){ const a = i/8*Math.PI*2; ctx.lineTo(Math.cos(a)*r*this.verts[i], Math.sin(a)*r*this.verts[i]); }
+      ctx.closePath(); ctx.stroke(); ctx.restore();
+    }
   }
 }
 
