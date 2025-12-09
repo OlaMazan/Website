@@ -51,6 +51,10 @@ class Ship {
     this.vel.y *= Math.pow(0.99, dt*60);
     this.pos.x += this.vel.x*dt;
     this.pos.y += this.vel.y*dt;
+    // detect border touch before wrap and trigger open-world event
+    if(this.pos.x < 0 || this.pos.x > W || this.pos.y < 0 || this.pos.y > H){
+      triggerOpenWorld();
+    }
     wrapPos(this.pos);
     if(this.respawnInvul>0) this.respawnInvul -= dt;
   }
@@ -127,6 +131,10 @@ let lastShot = 0;
 let running = false;        // <-- game is frozen until user presses any key
 let loopId = null;
 let lastTime = 0;
+let newsTimer = 0;
+let newsText = '';
+let lastOpenWorld = 0; // seconds
+const OPENWORLD_COOLDOWN = 2.0; // seconds between triggers
 
 /* ---------- Utility & game functions ---------- */
 
@@ -137,6 +145,16 @@ function spawnLevel(n){
     if(Math.hypot(x-ship.pos.x,y-ship.pos.y) < 100){ x = (x+200)%W; y=(y+200)%H; }
     asteroids.push(new Asteroid(x,y,3));
   }
+}
+
+function triggerOpenWorld(){
+  const now = performance.now()/1000;
+  if(now - lastOpenWorld < OPENWORLD_COOLDOWN) return; // debounce
+  lastOpenWorld = now;
+  // Clear asteroids and bullets
+  asteroids = [];
+  bullets = [];
+  // No message: only perform open-world effects (clears)
 }
 
 function splitAsteroid(a){
@@ -156,6 +174,7 @@ function resetGame(){
   ship = new Ship();
   spawnLevel(4);
   gameOverEl.hidden = true;
+  newsTimer = 0; newsText = '';
   updateUI();
 }
 
@@ -264,6 +283,27 @@ function gameLoop(now){
   ship.draw();
   bullets.forEach(b=>b.draw());
   asteroids.forEach(a=>a.draw());
+
+  // draw news overlay if active
+  if(newsTimer>0){
+    // dark translucent bar
+    ctx.save();
+    ctx.fillStyle = 'rgba(0,0,0,0.6)';
+    const txt = newsText;
+    ctx.font = '20px monospace';
+    const tw = ctx.measureText(txt).width + 40;
+    const th = 40;
+    const x = (W - tw) / 2;
+    const y = 40;
+    ctx.fillRect(x, y, tw, th);
+    ctx.fillStyle = 'white';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText(txt, W/2, y + th/2);
+    ctx.restore();
+    // decrement timer
+    newsTimer = Math.max(0, newsTimer - dt);
+  }
 
   loopId = requestAnimationFrame(gameLoop);
 }
