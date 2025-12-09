@@ -355,7 +355,18 @@ p{
     overflow: hidden;
 }
 
-.player {
+.player-space-invaders {
+    position: absolute;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 2rem;
+    color: #00ff00;
+    user-select: none;
+    z-index: 10;
+}
+
+.player-asteroids {
     position: absolute;
     bottom: 20px;
     left: 50%;

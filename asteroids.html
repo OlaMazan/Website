@@ -14,11 +14,39 @@
 
                     <div class="title">    <h2>Asteroids</h2>
                     <a href="index.html" class="back-btn">← Menu</a></div>
-            <p class="muted">Coming soon — small Asteroids demo will appear here.</p>
-
+        <div class="game-wrapper">
+            <div id="asteroids-game" class="space-invaders-game">
+                <div id="start-overlay-asteroids" class="start-overlay">
+                    <div class="overlay-content">
+                        <h2>Asteroids</h2>
+                        <p>Press any key to start</p>
+                    </div>
+                </div>
+                <canvas id="asteroids-canvas" width="800" height="600" style="display: block; width: 100%; height: 100%;"></canvas>
+            </div>
+            
+            <aside class="sidebar">
+                <div class="score-panel">
+                    <h2>Score</h2>
+                    <div id="score" class="score-value">0</div>
+                    
+                    <h3>Lives</h3>
+                    <div id="lives" class="score-value">3</div>
+                    
+                    <h3>Level</h3>
+                    <div id="level" class="score-value">1</div>
+                    
+                    <div id="game-over-ast" class="game-over" hidden>Game Over</div>
+                    
+                    <button id="restart-ast">Restart</button>
+                    <a href="index.html" class="back-btn">← Menu</a>
+                </div>
+            </aside>
+        </div>
         </div>
     </div>
 
     <script src="js/starfield.js"></script>
+    <script src="js/asteroids.js"></script>
 </body>
 </html>
