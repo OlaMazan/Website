@@ -117,6 +117,8 @@ const SHAPES = {
 const COLORS = { I: 'color-I', O: 'color-O', T: 'color-T', S: 'color-S', Z: 'color-Z', J: 'color-J', L: 'color-L' };
 
 let current = null; // bieżący klocek
+let nextPiece = null; // przygotowany następny klocek
+let previewCells = []; // komórki w podglądzie
 
 function spawnPiece(name) {
     const rotations = SHAPES[name];
@@ -136,6 +138,45 @@ function spawnPiece(name) {
 
 function indexFromRC(r, c) {
     return r * COLUMNS + c;
+}
+
+function previewIndex(r, c) {
+    return r * 4 + c;
+}
+
+function initNextPreview() {
+    const container = document.getElementById('next-preview');
+    if (!container) return;
+    container.innerHTML = '';
+    previewCells = [];
+    for (let i = 0; i < 16; i++) {
+        const pc = document.createElement('div');
+        pc.className = 'preview-cell';
+        container.appendChild(pc);
+        previewCells.push(pc);
+    }
+}
+
+function drawNextPreview(name) {
+    if (!previewCells.length) return;
+    // clear all
+    previewCells.forEach(pc => {
+        pc.className = 'preview-cell';
+    });
+    if (!name) return;
+    const shape = SHAPES[name][0]; // use base rotation
+    const originR = 1;
+    const originC = 1;
+    const colorClass = COLORS[name];
+    for (const [dr, dc] of shape) {
+        const r = originR + dr;
+        const c = originC + dc;
+        if (r >= 0 && r < 4 && c >= 0 && c < 4) {
+            const idx = previewIndex(r, c);
+            const pc = previewCells[idx];
+            if (pc) pc.classList.add(colorClass);
+        }
+    }
 }
 
 function renderBoard() {
@@ -229,6 +270,17 @@ function lockCurrent() {
         level = 1 + Math.floor(clearedLines / 10);
         updateScoreboard();
     }
+    // Spawn następny klocek (nextPiece jest przygotowany)
+    if (!gameOver) {
+        if (nextPiece) {
+            spawnPiece(nextPiece);
+        } else {
+            spawnPiece(randomPieceName());
+        }
+        // Przygotuj nowy nextPiece i zaktualizuj preview
+        nextPiece = randomPieceName();
+        drawNextPreview(nextPiece);
+    }
 }
 
 function clearFullLines() {
@@ -283,6 +335,7 @@ function restartGame() {
     clearedLines = 0;
     level = 1;
     current = null;
+    nextPiece = null;
     if (dropInterval) clearInterval(dropInterval);
     generateCells(numberOfCells);
     updateScoreboard();
@@ -302,8 +355,15 @@ function rotateCurrent() {
 let dropInterval = null;
 
 function startDemo() {
+    initNextPreview();
     generateCells(numberOfCells);
-    spawnPiece(randomPieceName());
+    // Przygotuj i pokaż następny klocek
+    nextPiece = randomPieceName();
+    drawNextPreview(nextPiece);
+    // Spawnuj klocek z nextPiece, a następnie przygotuj nowy nextPiece
+    spawnPiece(nextPiece);
+    nextPiece = randomPieceName();
+    drawNextPreview(nextPiece);
     if (dropInterval) clearInterval(dropInterval);
     dropInterval = setInterval(() => {
         if (gameOver) {
@@ -313,14 +373,13 @@ function startDemo() {
         }
         const moved = moveCurrent(1, 0);
         if (!moved) {
-            // zablokuj bieżący klocek i spawń nowy
+            // zablokuj bieżący klocek; lockCurrent zajmie się spawnem nextPiece
             lockCurrent();
             if (gameOver) {
                 clearInterval(dropInterval);
                 endGame();
                 return;
             }
-            spawnPiece(randomPieceName());
         }
     }, 500);
 }
