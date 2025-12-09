@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tetris</title>
+
+    <link rel="stylesheet" type="text/css" href="style.css">
+</head>
+<body>
+    <!-- Starfield background -->
+    <canvas id="starfield"></canvas>
+
+    <h1>Tetris</h1>
+    <p>Press any key to start</p>
+
+    <div class="game-area">
+        <div id="start-overlay" class="start-overlay">
+            <div class="overlay-content">
+                <h2>Tetris</h2>
+                <p>Press any key to start</p>
+            </div>
+        </div>
+        <div class="playground" aria-label="Tetris playground"></div>
+        <aside class="sidebar">
+            <div class="score-panel">
+                <h2>Score</h2>
+                <div id="score" class="score-value">0</div>
+
+                <h3>Lines</h3>
+                <div id="lines" class="score-value">0</div>
+
+                <h3>Level</h3>
+                <div id="level" class="score-value">1</div>
+
+                <h3>Next</h3>
+                <div class="next-wrap">
+                    <div id="next-preview" class="next-preview" aria-label="Next piece preview"></div>
+                </div>
+
+                <div id="game-over" class="game-over" hidden>Game Over</div>
+
+                <button id="restart">Restart</button>
+                <a href="index.html" class="back-btn">← Menu</a>
+                
+            </div>
+        </aside>
+    </div>
+
+    <script src="js/starfield.js"></script>
+    <script src="js/tetris.js"></script>
+</body>
+</html>

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Game Menu</title>
 
     <link rel="stylesheet" type="text/css" href="style.css">
 </head>
@@ -11,35 +11,24 @@
     <!-- Starfield background -->
     <canvas id="starfield"></canvas>
 
-    <h1>Tetris</h1>
-    <p>Press any key to start</p>
-
-    <div class="game-area">
-        <div class="playground" aria-label="Tetris playground"></div>
-        <aside class="sidebar">
-            <div class="score-panel">
-                <h2>Score</h2>
-                <div id="score" class="score-value">0</div>
-
-                <h3>Lines</h3>
-                <div id="lines" class="score-value">0</div>
-
-                <h3>Level</h3>
-                <div id="level" class="score-value">1</div>
-
-                <h3>Next</h3>
-                <div class="next-wrap">
-                    <div id="next-preview" class="next-preview" aria-label="Next piece preview"></div>
-                </div>
-
-                <div id="game-over" class="game-over" hidden>Game Over</div>
-
-                <button id="restart">Restart</button>
-                
-            </div>
-        </aside>
+    <div id="menu-container" class="menu-container">
+        <h1>Games</h1>
+        <div class="menu-buttons">
+            <a href="tetris.html" class="menu-btn">
+                <span>🎮</span>
+                <span>Tetris</span>
+            </a>
+            <a href="space-invaders.html" class="menu-btn">
+                <span>🚀</span>
+                <span>Space Invaders</span>
+            </a>
+            <a href="kulki.html" class="menu-btn">
+                <span>⚪</span>
+                <span>Kulki</span>
+            </a>
+        </div>
     </div>
 
-    <script src="js/main.js"></script>
+    <script src="js/starfield.js"></script>
 </body>
 </html>
