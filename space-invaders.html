@@ -11,12 +11,37 @@
     <!-- Starfield background -->
     <canvas id="starfield"></canvas>
 
-    <div class="game-placeholder">
+    <div class="space-invaders-container">
         <h1>Space Invaders</h1>
-        <p>Coming soon...</p>
-        <a href="index.html" class="back-btn">← Menu</a>
+        
+        <div class="game-wrapper">
+            <div id="space-invaders-game" class="space-invaders-game">
+                <div id="player" class="player">▲</div>
+                <div id="enemies" class="enemies-container"></div>
+                <div id="bullets" class="bullets-container"></div>
+            </div>
+            
+            <aside class="sidebar">
+                <div class="score-panel">
+                    <h2>Score</h2>
+                    <div id="score" class="score-value">0</div>
+                    
+                    <h3>Lives</h3>
+                    <div id="lives" class="score-value">3</div>
+                    
+                    <h3>Level</h3>
+                    <div id="level" class="score-value">1</div>
+                    
+                    <div id="game-over-si" class="game-over" hidden>Game Over</div>
+                    
+                    <button id="restart-si">Restart</button>
+                    <a href="index.html" class="back-btn">← Menu</a>
+                </div>
+            </aside>
+        </div>
     </div>
 
     <script src="js/starfield.js"></script>
+    <script src="js/space-invaders.js"></script>
 </body>
 </html>

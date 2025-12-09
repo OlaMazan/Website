@@ -278,3 +278,78 @@ p{
 .cell.color-Z { background-color: #f00000; }
 .cell.color-J { background-color: #0000f0; }
 .cell.color-L { background-color: #f0a000; }
+
+/* Space Invaders Styles */
+.space-invaders-container {
+    position: relative;
+    z-index: 1;
+    text-align: center;
+    margin-top: 2rem;
+}
+
+.space-invaders-container h1 {
+    margin-bottom: 1rem;
+}
+
+.game-wrapper {
+    display: flex;
+    gap: 1.5rem;
+    align-items: flex-start;
+    justify-content: center;
+}
+
+.space-invaders-game {
+    position: relative;
+    width: 600px;
+    height: 500px;
+    background: linear-gradient(180deg, #000033 0%, #001a1a 100%);
+    border: 3px solid #00ff00;
+    box-shadow: 0 0 20px rgba(0, 255, 0, 0.3);
+    overflow: hidden;
+}
+
+.player {
+    position: absolute;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 2rem;
+    color: #00ff00;
+    user-select: none;
+    z-index: 10;
+}
+
+.enemies-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 3;
+}
+
+.enemy {
+    position: absolute;
+    font-size: 1.5rem;
+    color: #ff00ff;
+    user-select: none;
+}
+
+.bullets-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 5;
+}
+
+.bullet {
+    position: absolute;
+    width: 4px;
+    height: 12px;
+    background-color: #00ff00;
+    border-radius: 2px;
+    box-shadow: 0 0 8px #00ff00;
+}
+
