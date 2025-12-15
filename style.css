@@ -27,7 +27,6 @@ body{
 h1{
     font-size: 4rem;
     position: relative;
-    color: aqua;
     z-index: 1;
 }
 
